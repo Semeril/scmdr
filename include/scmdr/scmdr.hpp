@@ -44,11 +44,6 @@ class ModuleNotInitialized : public std::runtime_error
     using runtime_error::runtime_error;
 };
 
-class PngNotFound : public std::runtime_error
-{
-    using runtime_error::runtime_error;
-};
-
 struct Position
 {
     int x = 0;

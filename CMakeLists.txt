@@ -13,6 +13,8 @@ target_sources(scmdr
 	BASE_DIRS ./include
 	FILES ./include/scmdr/scmdr.hpp
 )
+target_compile_definitions(scmdr PRIVATE STB_IMAGE_IMPLEMENTATION)
+target_compile_features(scmdr PRIVATE cxx_std_23)
 
 include(FetchContent)
 

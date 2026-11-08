@@ -2,7 +2,6 @@
 #include <windows.h>
 #endif
 
-#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "scmdr/scmdr.hpp"
 #include <fmt/format.h>
@@ -56,7 +55,7 @@ Texture::Texture(const char *filename)
 {
     if (!(filesystem::exists(filename) && filesystem::is_regular_file(filename) && filesystem::path(filename).extension() == ".png"))
     {
-        throw PngNotFound(format("Filename: {} is not a valid .png file", filename));
+        throw invalid_argument("filename");
     }
     int chb;
     auto img = stbi_load(filename, &size_.width, &size_.height, &chb, 4);
