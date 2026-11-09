@@ -1,11 +1,13 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 4.4.5)
 project(SCMDR VERSION 1 LANGUAGES CXX)
 
 add_library(scmdr)
 add_library(scmdr::scmdr ALIAS scmdr)
 
 target_sources(scmdr
-	PRIVATE ./src/scmdr.cpp
+	PRIVATE
+		./src/scmdr.cpp
+		./src/stb_image.h
 )
 target_sources(scmdr
 	PUBLIC
@@ -24,6 +26,7 @@ FetchContent_Declare(
 	https://github.com/fmtlib/fmt.git
 	GIT_TAG
 	12.2.1
+	SYSTEM
 )
 FetchContent_MakeAvailable(fmt)
 
