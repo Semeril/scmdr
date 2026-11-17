@@ -1,6 +1,7 @@
 #include "scmdr/canvas.hpp"
 #include <fmt/format.h>
 #include <iostream>
+#include <stdexcept>
 #if defined(_WIN32)
 #include <windows.h>
 #endif
@@ -35,6 +36,9 @@ double Canvas::DeltaTime::get() const { return value; }
 
 Canvas::Canvas(int width, int height)
     : size{width, height}, colors(width * height, Color()) {
+  if (height % 2) {
+    throw invalid_argument("height");
+  }
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
 #if defined(_WIN32)
@@ -44,7 +48,7 @@ Canvas::Canvas(int width, int height)
   // colors_.assign(height, vector<Color>(width, Color()));
   // text_.assign(height, vector<Text>(width, Text{'\0', {0, 0, 0}}));
   colors2 = colors;
-  refresh(false);
+  refresh_simple();
 }
 // float Canvas::getDeltaTime() { return dt.get(); }
 // void Canvas::setFPS(unsigned int fps) { fps_ = fps; }
@@ -56,7 +60,7 @@ Color Canvas::at(array<int, 2> position) const {
   return colors[position[1] * size[0] + position[0]];
 }
 
-void Canvas::refresh(bool optimize) {
+void Canvas::refresh_if_changed() { // much faster
   string output;
   output.append("\033[0m");
   auto colors_get = [&](int x, int y) { return colors[y * size[0] + x]; };
@@ -68,16 +72,35 @@ void Canvas::refresh(bool optimize) {
 
   for (int row = 0; row < size[1]; row += 2) {
     for (int col = 0; col < size[0]; col++) {
-      if (has_changed(col, row) || !optimize) {
+      if (has_changed(col, row)) {
         output.append(setCursor(row / 2 + 1, col + 1))
             .append(getColoredForeground(colors_get(col, row)))
             .append(getColoredBackground(colors_get(col, row + 1)))
             .append("\u2580");
       }
-      // if (text_[row][col].char_) {
-      //   output << pos(row / 2 + 1, col + 1) << fg(text_[row][col].color)
-      //          << bg(colors_(col, row + 1)) << text_[row][col].char_;
-      // }
+    }
+  }
+  output.append("\033[0m");
+  colors2 = colors;
+  cout << output;
+  deltaTime.update();
+}
+void Canvas::refresh_simple() {
+  string output;
+  output.append("\033[0m");
+  auto colors_get = [&](int x, int y) { return colors[y * size[0] + x]; };
+  auto colors2_get = [&](int x, int y) { return colors2[y * size[0] + x]; };
+  auto has_changed = [&](int col, int row) {
+    return colors_get(col, row) != colors2_get(col, row) ||
+           colors_get(col, row + 1) != colors2_get(col, row + 1);
+  };
+
+  for (int row = 0; row < size[1]; row += 2) {
+    for (int col = 0; col < size[0]; col++) {
+      output.append(setCursor(row / 2 + 1, col + 1))
+          .append(getColoredForeground(colors_get(col, row)))
+          .append(getColoredBackground(colors_get(col, row + 1)))
+          .append("\u2580");
     }
   }
   output.append("\033[0m");
