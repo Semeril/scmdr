@@ -1,4 +1,5 @@
-#include <scmdr/scmdr.hpp>
+#include <iostream>
+#include <scmdr/canvas.hpp>
 
 using namespace std;
 
@@ -11,8 +12,8 @@ int main() {
   while (true) {
     c.fill({255, 255, 255, 255});
     c.draw(t, {(int)x, (int)y});
-    c.refresh();
-    x -= 1e-2;
+    c.refresh(0);
+    x += 1e-2;
     y += 1e-2;
     cout << "\033[61;0H" << 1. / c.deltaTime.get();
   }
