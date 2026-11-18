@@ -126,17 +126,27 @@ void Canvas::fillRect(array<uint8_t, 4> color, array<int, 4> rect) {
 void Canvas::draw(const Texture &texture, array<int, 2> position) {
   auto textureRect = IntegerRect{
       {position[0], position[1], texture.size()[0], texture.size()[1]}};
-  for (int row = textureRect.position[1];
-       row < textureRect.position[1] + textureRect.size[1]; row++) {
-    for (int col = textureRect.position[0];
-         col < textureRect.position[0] + textureRect.size[0]; col++) {
-      if (row < 0 || row >= size[1] || col < 0 || col >= size[0])
+  // for (int row = textureRect.position[1];
+  //      row < textureRect.position[1] + textureRect.size[1]; row++) {
+  //   for (int col = textureRect.position[0];
+  //        col < textureRect.position[0] + textureRect.size[0]; col++) {
+  //     if (row < 0 || row >= size[1] || col < 0 || col >= size[0])
+  //       continue;
+  //     colors[row * size[0] + col] =
+  //         Color{texture.at({col - textureRect.position[0],
+  //                           row - textureRect.position[1]})}
+  //             .over(colors[row * size[0] + col])
+  //             .rgba;
+  //   }
+  // }
+  for (int row = 0; row < texture.size()[1]; row++) {
+    for (int col = 0; col < texture.size()[0]; col++) {
+      auto x = position[0] + col;
+      auto y = position[1] + row;
+      if (y < 0 || y >= size[1] || x < 0 || x >= size[0])
         continue;
-      colors[row * size[0] + col] =
-          Color{texture.at({col - textureRect.position[0],
-                            row - textureRect.position[1]})}
-              .over(colors[row * size[0] + col])
-              .rgba;
+      colors[y * size[0] + x] =
+          Color{texture.at({x, y})}.over(colors[y * size[0] + x]).rgba;
     }
   }
 }
