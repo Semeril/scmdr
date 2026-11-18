@@ -1,6 +1,5 @@
 #include "scmdr/canvas.hpp"
 #include "color.hpp"
-#include "integer_rect.hpp"
 #include <array>
 #include <fmt/format.h>
 #include <iostream>
@@ -110,35 +109,7 @@ void Canvas::fill(array<uint8_t, 4> color) {
   colors = vector(colors.size(), color);
 }
 
-void Canvas::fillRect(array<uint8_t, 4> color, array<int, 4> rect) {
-  const auto &[position, size] = IntegerRect{rect}.intersect(
-      IntegerRect{{0, 0, this->size[0], this->size[1]}});
-  for (int row = position[1]; row < size[1]; row++) {
-    for (int col = position[0]; col < size[0]; col++) {
-      if (row < 0 || row >= size[1] || col < 0 || col >= size[0])
-        continue;
-      colors[row * size[0] + col] =
-          Color{color}.over(colors[row * size[0] + col]).rgba;
-    }
-  }
-}
-
 void Canvas::draw(const Texture &texture, array<int, 2> position) {
-  auto textureRect = IntegerRect{
-      {position[0], position[1], texture.size()[0], texture.size()[1]}};
-  // for (int row = textureRect.position[1];
-  //      row < textureRect.position[1] + textureRect.size[1]; row++) {
-  //   for (int col = textureRect.position[0];
-  //        col < textureRect.position[0] + textureRect.size[0]; col++) {
-  //     if (row < 0 || row >= size[1] || col < 0 || col >= size[0])
-  //       continue;
-  //     colors[row * size[0] + col] =
-  //         Color{texture.at({col - textureRect.position[0],
-  //                           row - textureRect.position[1]})}
-  //             .over(colors[row * size[0] + col])
-  //             .rgba;
-  //   }
-  // }
   for (int row = 0; row < texture.size()[1]; row++) {
     for (int col = 0; col < texture.size()[0]; col++) {
       auto x = position[0] + col;

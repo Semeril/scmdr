@@ -5,11 +5,9 @@ add_library(scmdr
 	src/canvas.cpp
 	src/stb_image.h
 	src/texture.cpp
-	src/integer_rect.hpp
 	src/color.hpp
 	include/scmdr/canvas.hpp
 	include/scmdr/texture.hpp
-	src/integer_rect.cpp
 	src/color.cpp
 )
 target_include_directories(scmdr PUBLIC include)

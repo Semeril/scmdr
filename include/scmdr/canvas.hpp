@@ -30,6 +30,5 @@ public:
   void refresh_if_changed();
   void refresh_simple();
   void fill(std::array<uint8_t, 4> color);
-  void fillRect(std::array<uint8_t, 4> color, std::array<int, 4> rect);
   void draw(const Texture &texture, std::array<int, 2> position);
 };
