@@ -117,7 +117,7 @@ void Canvas::draw(const Texture &texture, array<int, 2> position) {
       if (y < 0 || y >= size[1] || x < 0 || x >= size[0])
         continue;
       colors[y * size[0] + x] =
-          Color{texture.at({x, y})}.over(colors[y * size[0] + x]).rgba;
+          Color{texture.at({col, row})}.over(colors[y * size[0] + x]).rgba;
     }
   }
 }
