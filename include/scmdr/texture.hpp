@@ -2,6 +2,7 @@
 // #include "scmdr/color.hpp"
 // #include "scmdr/integer_rect.hpp"
 #include <array>
+#include <cstdint>
 #include <memory>
 #include <string_view>
 #include <vector>
@@ -18,6 +19,8 @@ private:
 
 public:
   static Texture loadPNG(std::string_view filename);
+  static Texture solidColor(std::array<uint8_t, 4> color,
+                            std::array<int, 2> size);
 
   std::array<uint8_t, 4> at(std::array<int, 2> position) const;
   std::array<int, 2> size() const;

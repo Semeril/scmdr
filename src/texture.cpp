@@ -3,7 +3,6 @@
 #include <array>
 #include <cstdint>
 #include <filesystem>
-#include <iostream>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -42,6 +41,12 @@ Texture Texture::loadPNG(string_view filename) {
       make_shared<array<int, 4>>(array<int, 4>{0, 0, (int)width, (int)height});
   cache[(string)filename] = {colors, fragment};
   return Texture{colors, {0, 0, (int)width, (int)height}, fragment};
+}
+Texture Texture::solidColor(std::array<uint8_t, 4> color,
+                            std::array<int, 2> size) {
+  return {make_unique<vector<array<uint8_t, 4>>>(size[0] * size[1], color),
+          {0, 0, size[0], size[1]},
+          make_unique<array<int, 4>>(array<int, 4>{0, 0, size[0], size[1]})};
 }
 array<uint8_t, 4> Texture::at(array<int, 2> position) const {
   if (position[0] >= fragment[2] || position[1] >= fragment[3]) {
