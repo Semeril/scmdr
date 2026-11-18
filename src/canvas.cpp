@@ -1,7 +1,11 @@
 #include "scmdr/canvas.hpp"
+#include "color.hpp"
+#include "integer_rect.hpp"
+#include <array>
 #include <fmt/format.h>
 #include <iostream>
 #include <stdexcept>
+
 #if defined(_WIN32)
 #include <windows.h>
 #endif
@@ -35,7 +39,7 @@ void Canvas::DeltaTime::update() {
 double Canvas::DeltaTime::get() const { return value; }
 
 Canvas::Canvas(int width, int height)
-    : size{width, height}, colors(width * height, Color()) {
+    : size{width, height}, colors(width * height, {255, 255, 255}) {
   if (height % 2) {
     throw invalid_argument("height");
   }
@@ -52,13 +56,6 @@ Canvas::Canvas(int width, int height)
 }
 // float Canvas::getDeltaTime() { return dt.get(); }
 // void Canvas::setFPS(unsigned int fps) { fps_ = fps; }
-
-Color Canvas::at(array<int, 2> position) const {
-  if (position[0] >= size[0] || position[1] >= size[1]) {
-    throw invalid_argument("position");
-  }
-  return colors[position[1] * size[0] + position[0]];
-}
 
 void Canvas::refresh_if_changed() { // much faster
   string output;
@@ -109,32 +106,37 @@ void Canvas::refresh_simple() {
   deltaTime.update();
 }
 
-void Canvas::fill(Color color) { colors = vector(colors.size(), color); }
+void Canvas::fill(array<uint8_t, 4> color) {
+  colors = vector(colors.size(), color);
+}
 
-void Canvas::fillRect(Color color, IntegerRect rect) {
-  const auto &[position, size] =
-      rect.intersect(IntegerRect{{0u, 0u}, this->size});
+void Canvas::fillRect(array<uint8_t, 4> color, array<int, 4> rect) {
+  const auto &[position, size] = IntegerRect{rect}.intersect(
+      IntegerRect{{0, 0, this->size[0], this->size[1]}});
   for (int row = position[1]; row < size[1]; row++) {
     for (int col = position[0]; col < size[0]; col++) {
       if (row < 0 || row >= size[1] || col < 0 || col >= size[0])
         continue;
-      colors[row * size[0] + col] = color.over(colors[row * size[0] + col]);
+      colors[row * size[0] + col] =
+          Color{color}.over(colors[row * size[0] + col]).rgba;
     }
   }
 }
 
 void Canvas::draw(const Texture &texture, array<int, 2> position) {
-  auto textureRect = IntegerRect(position, texture.size());
+  auto textureRect = IntegerRect{
+      {position[0], position[1], texture.size()[0], texture.size()[1]}};
   for (int row = textureRect.position[1];
        row < textureRect.position[1] + textureRect.size[1]; row++) {
     for (int col = textureRect.position[0];
          col < textureRect.position[0] + textureRect.size[0]; col++) {
       if (row < 0 || row >= size[1] || col < 0 || col >= size[0])
         continue;
-      colors[row * size[0] + col] = texture
-                                        .at({col - textureRect.position[0],
-                                             row - textureRect.position[1]})
-                                        .over(colors[row * size[0] + col]);
+      colors[row * size[0] + col] =
+          Color{texture.at({col - textureRect.position[0],
+                            row - textureRect.position[1]})}
+              .over(colors[row * size[0] + col])
+              .rgba;
     }
   }
 }

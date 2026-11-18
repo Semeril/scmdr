@@ -5,8 +5,8 @@ add_library(scmdr
 	src/canvas.cpp
 	src/stb_image.h
 	src/texture.cpp
-	include/scmdr/integer_rect.hpp
-	include/scmdr/color.hpp
+	src/integer_rect.hpp
+	src/color.hpp
 	include/scmdr/canvas.hpp
 	include/scmdr/texture.hpp
 	src/integer_rect.cpp
