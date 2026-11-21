@@ -28,6 +28,6 @@ target_link_libraries(scmdr PRIVATE fmt::fmt)
 add_library(scmdr::scmdr ALIAS scmdr)
 
 # example
-add_executable(example examples/main.cpp)
-target_link_libraries(example PRIVATE scmdr::scmdr)
-target_link_options(example PRIVATE -static)
+# add_executable(example examples/main.cpp)
+# target_link_libraries(example PRIVATE scmdr::scmdr)
+# target_link_options(example PRIVATE -static)
